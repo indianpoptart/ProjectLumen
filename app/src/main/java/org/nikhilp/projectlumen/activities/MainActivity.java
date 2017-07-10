@@ -24,6 +24,8 @@ import android.view.MenuItem;
 
 import com.github.nisrulz.sensey.ChopDetector;
 import com.github.nisrulz.sensey.Sensey;
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 
 import org.nikhilp.projectlumen.R;
 import org.nikhilp.projectlumen.services.BackgroundService;
@@ -43,7 +45,8 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                fabricInit();
+                Snackbar.make(view, "Crash Reporting Enabled!", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -76,6 +79,9 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    public void fabricInit(){
+        Fabric.with(this, new Crashlytics());
+    }
 
     @Override
     public void onBackPressed() {
@@ -117,15 +123,12 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
 
+
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
 
         }
 
