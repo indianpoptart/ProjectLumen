@@ -80,6 +80,7 @@ public class BackgroundService extends IntentService {
 
         final ProximityDetector.ProximityListener proximityListener=new ProximityDetector.ProximityListener() {
             @Override public void onNear() {
+                Log.d("Sensey","In Pocket");
                 Sensey.getInstance().stopChopDetection(chopListener);
                 turnOffLight();
             }
