@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.github.nisrulz.sensey.ChopDetector;
 import com.github.nisrulz.sensey.MovementDetector;
+import com.github.nisrulz.sensey.ProximityDetector;
 import com.github.nisrulz.sensey.Sensey;
 
 /**
@@ -47,9 +48,9 @@ public class BackgroundService extends IntentService {
         Log.d("ProjectLumen","Service Started");
         Sensey.getInstance().init(getApplicationContext());
 
-        ChopDetector.ChopListener chopListener=new ChopDetector.ChopListener() {
+        final ChopDetector.ChopListener chopListener=new ChopDetector.ChopListener() {
             @Override public void onChop() {
-                Log.d("ProjectLumen","Chop Detected");
+                Log.d("Sensey","Chop Detected");
                 try {
                     if (isTorchOn) {
                         turnOffLight();
@@ -63,7 +64,6 @@ public class BackgroundService extends IntentService {
                 }
             }
         };
-        Sensey.getInstance().startChopDetection(2,2,chopListener);
         isTorchOn = false;
 
         objCameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
@@ -72,6 +72,32 @@ public class BackgroundService extends IntentService {
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
+
+
+
+        final ProximityDetector.ProximityListener proximityListener=new ProximityDetector.ProximityListener() {
+            @Override public void onNear() {
+                Sensey.getInstance().stopChopDetection(chopListener);
+                turnOffLight();
+            }
+
+            @Override public void onFar() {
+                Sensey.getInstance().startChopDetection((float) 0.625,1,chopListener);
+            }
+        };
+        final MovementDetector.MovementListener movementListener=new MovementDetector.MovementListener() {
+            @Override public void onMovement() {
+                Sensey.getInstance().startProximityDetection(proximityListener);
+            }
+
+            @Override public void onStationary() {
+                Sensey.getInstance().stopProximityDetection(proximityListener);
+                Log.d("Sensey","Stationary");
+            }
+
+        };
+        Sensey.getInstance().startProximityDetection(proximityListener);
+        Sensey.getInstance().startMovementDetection(movementListener);
     }
 
     public void turnOnLight() {
