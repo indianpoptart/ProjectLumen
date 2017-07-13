@@ -33,10 +33,6 @@
             android:name="io.fabric.ApiKey"
             android:value="81de282abeba311751e18b3d5109feb5ba38e192" />
 
-        <activity
-            android:name=".Main2Activity"
-            android:label="@string/title_activity_main2"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

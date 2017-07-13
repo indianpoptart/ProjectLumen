@@ -3,10 +3,12 @@ package org.nikhilp.projectlumen.services;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.os.Build;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -47,9 +49,12 @@ public class BackgroundService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         Log.d("ProjectLumen","Service Started");
         Sensey.getInstance().init(getApplicationContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = prefs.edit();
 
         final ChopDetector.ChopListener chopListener=new ChopDetector.ChopListener() {
             @Override public void onChop() {
+
                 Log.d("Sensey","Chop Detected");
                 try {
                     if (isTorchOn) {
@@ -73,8 +78,6 @@ public class BackgroundService extends IntentService {
             e.printStackTrace();
         }
 
-
-
         final ProximityDetector.ProximityListener proximityListener=new ProximityDetector.ProximityListener() {
             @Override public void onNear() {
                 Sensey.getInstance().stopChopDetection(chopListener);
@@ -82,7 +85,7 @@ public class BackgroundService extends IntentService {
             }
 
             @Override public void onFar() {
-                Sensey.getInstance().startChopDetection((float) 0.625,1,chopListener);
+                Sensey.getInstance().startChopDetection(5,1,chopListener);
             }
         };
         final MovementDetector.MovementListener movementListener=new MovementDetector.MovementListener() {
@@ -93,13 +96,14 @@ public class BackgroundService extends IntentService {
             @Override public void onStationary() {
                 Sensey.getInstance().stopProximityDetection(proximityListener);
                 Log.d("Sensey","Stationary");
+                turnOffLight();
+
             }
 
         };
         Sensey.getInstance().startProximityDetection(proximityListener);
         Sensey.getInstance().startMovementDetection(movementListener);
     }
-
     public void turnOnLight() {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

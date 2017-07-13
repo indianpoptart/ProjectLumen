@@ -8,6 +8,7 @@ import android.hardware.camera2.CameraManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.telecom.Call;
@@ -32,6 +33,7 @@ import org.nikhilp.projectlumen.services.BackgroundService;
 
 public class MainActivity extends AppCompatActivity {
 
+    private CoordinatorLayout clayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
