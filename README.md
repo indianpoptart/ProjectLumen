@@ -8,7 +8,7 @@ Basically this
 ![chop](https://help.motorola.com/hc/images/global/chop.gif)
 
 # Versions
-Current **Alpha** Release: [v0.1](https://github.com/indianpoptart/ProjectLumen/releases/tag/v0.1) (7/10/2017)
+Current **Alpha** Release: [v0.1.1](https://github.com/indianpoptart/ProjectLumen/releases/tag/v0.1.1) (01/09/2019)
 
 # Compatibility
 The app has been tested on this device:
