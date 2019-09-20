@@ -3,11 +3,9 @@ package org.nikhilp.projectlumen.services
 import android.app.IntentService
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraManager
 import android.os.Build
-import android.preference.PreferenceManager
 import android.util.Log
 
 import com.github.nisrulz.sensey.ChopDetector
@@ -32,27 +30,26 @@ class BackgroundService : IntentService("Chop Detection") {
     /**
      * for getting torch mode
      */
-    var isTorchOn: Boolean? = null
-
-    override fun onCreate() {
-        super.onCreate()
-    }
+    private var isTorchOn: Boolean? = null
 
     override fun onHandleIntent(intent: Intent?) {
         Log.d("ProjectLumen", "Service Started")
         Sensey.getInstance().init(applicationContext)
-        val prefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val editor = prefs.edit()
 
         val chopListener = ChopDetector.ChopListener {
             Log.d("Sensey", "Chop Detected")
             try {
-                if (isTorchOn!!) {
-                    turnOffLight()
-                    isTorchOn = false
-                } else {
-                    turnOnLight()
-                    isTorchOn = true
+                isTorchOn = when {
+                    isTorchOn!! -> {
+                        turnOffLight()
+                        false
+                    }
+                    else -> {
+                        turnOnLight()
+                        true
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -75,7 +72,7 @@ class BackgroundService : IntentService("Chop Detection") {
             }
 
             override fun onFar() {
-                Sensey.getInstance().startChopDetection(5f, 1, chopListener)
+                Sensey.getInstance().startChopDetection(prefs.getInt("sensitivity", 3).toFloat(), 2, chopListener)
             }
         }
         val movementListener = object : MovementDetector.MovementListener {
